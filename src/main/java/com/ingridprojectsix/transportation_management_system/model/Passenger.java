@@ -8,8 +8,7 @@ public class Passenger {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long passengerId;
 
-    @OneToOne
-    @JoinColumn(name = "user_id")
+    @OneToMany(fetch = FetchType.LAZY) @JoinColumn(name = "passenger")
     private User user;
 
     private String name;

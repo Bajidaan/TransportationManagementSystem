@@ -1,4 +1,11 @@
 package com.ingridprojectsix.transportation_management_system.model;
 
-public class User {
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "user_table")
+public class Users {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 }

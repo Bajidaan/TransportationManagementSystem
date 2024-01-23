@@ -1,5 +1,4 @@
 package com.ingridprojectsix.transportation_management_system.model;
-
 import com.ingridprojectsix.transportation_management_system.dto.AvailabilityStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -7,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+
 
 @Entity
 @NoArgsConstructor
@@ -51,4 +51,8 @@ public class Driver {
 
     @Column(name = "Location")
     private String location;
+
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "driver")
+    private Rider rider;
+
 }

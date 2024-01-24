@@ -24,31 +24,31 @@ public class Driver {
     @JoinColumn(name = "User_id", unique = true)
     private User user;
 
-    @Column(name = "FirstName")
+    @Column(name = "first_name")
     private String firstName;
 
-    @Column(name = "LastName")
+    @Column(name = "last_name")
     private String lastName;
 
-    @Column(name = "LicenceNumber", unique = true)
+    @Column(name = "licence_number", unique = true)
     private String licenseNumber;
 
-    @Column(name = "PlateNumber", unique = true)
+    @Column(name = "plate_number", unique = true)
     private String plateNumber;
 
-    @Column(name = "CarDetails")
-    private String carDetails;
+    @Column(name = "car_model")
+    private String carModel;
 
     @Column(name = "AvailabilityStatus")
     @Enumerated(EnumType.STRING)
     private AvailabilityStatus availabilityStatus;
 
-    @Column(name = "AccountBalance")
+    @Column(name = "account_balance")
     private Double accountBalance;
 
-    @Column(name = "RegistrationDate")
+    @Column(name = "registration_date")
     private LocalDateTime registrationDate;
 
-    @Column(name = "Location")
+    @Column(name = "location")
     private String location;
 }

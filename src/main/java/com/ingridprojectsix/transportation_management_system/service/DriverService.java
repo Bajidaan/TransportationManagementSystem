@@ -1,6 +1,6 @@
 package com.ingridprojectsix.transportation_management_system.service;
 
-import com.ingridprojectsix.transportation_management_system.dto.DriverRegistrationRequest;
+import com.ingridprojectsix.transportation_management_system.model.DriverRegistrationRequest;
 import com.ingridprojectsix.transportation_management_system.model.Driver;
 import com.ingridprojectsix.transportation_management_system.repository.DriverRepository;
 import org.springframework.beans.factory.annotation.Autowired;

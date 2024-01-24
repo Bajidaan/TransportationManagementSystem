@@ -1,6 +1,5 @@
 package com.ingridprojectsix.transportation_management_system.model;
 
-import com.ingridprojectsix.transportation_management_system.dto.AvailabilityStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

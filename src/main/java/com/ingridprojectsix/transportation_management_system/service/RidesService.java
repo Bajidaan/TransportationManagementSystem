@@ -28,7 +28,7 @@ public interface RidesService {
 
     List<Rides> getRidesByEndLocation(String endLocation);
 
-    Rides saveRide(Rides ride);
+    Rides updateRide(Rides ride, long rideId);
 
     String deleteRide(long rideId);
 }

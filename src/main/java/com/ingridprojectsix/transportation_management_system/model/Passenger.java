@@ -1,10 +1,20 @@
 package com.ingridprojectsix.transportation_management_system.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.validator.constraints.Email;
 
 import java.util.List;
 
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Setter
+@Getter
+@Table(name = "passenger")
 public class Passenger {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,10 +24,17 @@ public class Passenger {
     private List<Rides> rides;
 
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "passenger")
-    private User user;
+    private Users user;
 
+    @Column(name = "name")
     private String name;
+
+    @Column(name = "email")
     private String email;
+
+    @Column(name = "phone_number")
     private String phoneNumber;
+
+    @Column(name = "address") @Email
     private String address;
 }

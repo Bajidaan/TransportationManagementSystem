@@ -1,11 +1,14 @@
 package com.ingridprojectsix.transportation_management_system.model;
 
+import com.ingridprojectsix.transportation_management_system.dto.AvailabilityStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
 
 @Entity
 @NoArgsConstructor
@@ -19,7 +22,7 @@ public class Driver {
     @Column(name = "DriverId")
     private Long driverId;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "User_id", unique = true)
     private User user;
 
@@ -50,4 +53,8 @@ public class Driver {
 
     @Column(name = "location")
     private String location;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "drivers")
+    private List<Rides> rides;
+
 }

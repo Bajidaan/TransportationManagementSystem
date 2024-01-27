@@ -23,7 +23,7 @@ public class Driver {
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "User_id", unique = true)
-    private User user;
+    private Users user;
 
     @Column(name = "FirstName")
     private String firstName;

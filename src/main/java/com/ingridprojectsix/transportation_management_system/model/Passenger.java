@@ -23,18 +23,19 @@ public class Passenger {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "passengers")
     private List<Rides> rides;
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "passenger")
-    private Users user;
+//    @OneToOne(cascade = CascadeType.ALL, mappedBy = "passenger")
+//    private Users user;
 
     @Column(name = "name")
     private String name;
 
     @Column(name = "email")
+    @Email(message = "Please provide a valid email address")
     private String email;
 
     @Column(name = "phone_number")
     private String phoneNumber;
 
-    @Column(name = "address") @Email
+    @Column(name = "address")
     private String address;
 }

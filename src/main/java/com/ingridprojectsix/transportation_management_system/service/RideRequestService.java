@@ -1,6 +1,7 @@
 package com.ingridprojectsix.transportation_management_system.service;
 
 import com.ingridprojectsix.transportation_management_system.exception.RideRequestNotFoundException;
+import com.ingridprojectsix.transportation_management_system.model.DriverStatus;
 import com.ingridprojectsix.transportation_management_system.model.Passenger;
 import com.ingridprojectsix.transportation_management_system.model.RideRequest;
 import com.ingridprojectsix.transportation_management_system.repository.PassengerRepository;
@@ -66,10 +67,22 @@ public class RideRequestService {
         return (costOfRide < passenger.getAccountBalance());
     }
 
-    public Driver assignDriver(List<Driver> drivers, double[] passengerCoordinate) {
-        for (Driver driver : drivers) {
+    public DriverStatus assignDriver(List<DriverStatus> drivers, double[] passengerCoordinate) {
+        double minDistance = 5000;
+        DriverStatus assignDriver = null;
 
+        for (DriverStatus driver : drivers) {
+            double[] driverLocation = {driver.getLatitude(), driver.getLongitude()};
+
+            double distance = calculateDistance(passengerCoordinate, driverLocation);
+
+
+            if (driver.isAvailable() && distance < minDistance) {
+                minDistance = distance;
+                assignDriver = driver;
+            }
         }
+        return assignDriver;
     }
 
 

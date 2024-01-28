@@ -1,5 +1,6 @@
 package com.ingridprojectsix.transportation_management_system.service;
 
+import com.ingridprojectsix.transportation_management_system.dto.RideRequestDto;
 import com.ingridprojectsix.transportation_management_system.exception.RideRequestNotFoundException;
 import com.ingridprojectsix.transportation_management_system.model.DriverStatus;
 import com.ingridprojectsix.transportation_management_system.model.Passenger;
@@ -11,11 +12,8 @@ import com.opencagedata.jopencage.model.JOpenCageForwardRequest;
 import com.opencagedata.jopencage.model.JOpenCageLatLng;
 import com.opencagedata.jopencage.model.JOpenCageResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.sql.Driver;
 import java.util.List;
 import java.util.Map;
 
@@ -43,6 +41,20 @@ public class RideRequestService {
                .orElseThrow(RideRequestNotFoundException::new);
     }
 
+    public Map<String, String> saveRideRequest(RideRequestDto request) {
+        Passenger passenger = passengerRepository.findById(request.getPassengerId())
+                .orElseThrow();
+
+       RideRequest rideRequest = new RideRequest(request);
+       rideRequest.setPassenger(passenger);
+
+        if (canOderRide(request, passenger)) {
+            requestRepository.save(rideRequest);
+            return Map.of("message", "ride request for ride. Driver will be assign shortly");
+        }
+        return Map.of("message", "unable to order. Load your account");
+    }
+
     public Map<String, String> updateRequest(Long requestId, RideRequest request) {
         RideRequest toUpdate = requestRepository.findById(requestId)
                 .orElseThrow(RideRequestNotFoundException::new);
@@ -54,16 +66,13 @@ public class RideRequestService {
         return Map.of("message", "update successfully");
     }
 
-    public boolean canOderRide(Long passengerId, RideRequest request) {
-        Passenger passenger = passengerRepository.findById(passengerId)
-                .orElseThrow();
+    private boolean canOderRide(RideRequestDto request, Passenger passenger) {
 
         double distance = calculateDistance(getCoordinate(request.getStartLocation()),
                 getCoordinate(request.getEndLocation()));
 
         double costOfRide = distance * COST_PER_kM;
 
-        //return new ResponseEntity<>(Map.of("message", "Insufficient account balance"), HttpStatus.BAD_REQUEST);
         return (costOfRide < passenger.getAccountBalance());
     }
 

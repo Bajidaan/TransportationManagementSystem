@@ -22,7 +22,7 @@ public class Rides {
     @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "passenger_id")
     private Passenger passengers;
 
-    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "driver_idg")
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "driver_id")
     private Driver drivers;
 
     @Column(name = "start_location")

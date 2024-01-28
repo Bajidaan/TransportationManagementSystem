@@ -20,9 +20,6 @@ public class Passenger {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long passengerId;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "passengers")
-    private List<Rides> rides;
-
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private Users user;

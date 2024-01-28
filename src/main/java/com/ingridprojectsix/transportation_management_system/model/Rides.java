@@ -19,10 +19,10 @@ public class Rides {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Column(name = "ride_id")
     private long riderId;
 
-    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "passenger")
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "passenger_id")
     private Passenger passengers;
 
-    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "drivers")
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "driver_idg")
     private Driver drivers;
 
     @Column(name = "start_location")

@@ -39,4 +39,7 @@ public class Passenger {
 
     @Column(name = "address")
     private String address;
+
+    @Column(name = "account_balance")
+    private double accountBalance = 0.0;
 }

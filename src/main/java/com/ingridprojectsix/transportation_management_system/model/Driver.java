@@ -1,5 +1,6 @@
 package com.ingridprojectsix.transportation_management_system.model;
 
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -8,6 +9,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
 
 
 @Entity
@@ -22,7 +25,7 @@ public class Driver {
     @Column(name = "DriverId")
     private Long driverId;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "User_id", unique = true)
     private Users user;
 
@@ -62,8 +65,5 @@ public class Driver {
     @NotBlank
     @Column(name = "location")
     private String location;
-
-    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "driver")
-    private Rider rider;
 
 }

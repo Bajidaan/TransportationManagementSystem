@@ -28,7 +28,14 @@ public interface RidesService {
 
     List<Rides> getRidesByEndLocation(String endLocation);
 
-    Rides updateRide(Rides ride, long rideId);
+    Rides updateRideStatus(long rideId, RequestStatus newStatus);
+
+    Rides updateStatusToPending(long rideId);
+
+    Rides updateStatusToInProgress(long rideId);
+
+    Rides updateStatusToCompleted(long rideId);
+
 
     String deleteRide(long rideId);
 }

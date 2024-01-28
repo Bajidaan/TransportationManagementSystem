@@ -20,7 +20,6 @@ public class Passenger {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long passengerId;
 
-
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private Users user;
@@ -29,6 +28,7 @@ public class Passenger {
     private String name;
 
     @Column(name = "email")
+    @Email(message = "Please provide a valid email address")
     private String email;
 
     @Column(name = "phone_number")

@@ -20,11 +20,9 @@ public class Passenger {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long passengerId;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "passengers")
-    private List<Rides> rides;
-
-//    @OneToOne(cascade = CascadeType.ALL, mappedBy = "passenger")
-//    private Users user;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
+    private Users user;
 
     @Column(name = "name")
     private String name;
@@ -38,4 +36,5 @@ public class Passenger {
 
     @Column(name = "address")
     private String address;
+    private double accountBalance;
 }

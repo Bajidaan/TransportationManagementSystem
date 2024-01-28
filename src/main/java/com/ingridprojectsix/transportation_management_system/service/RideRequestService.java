@@ -12,6 +12,7 @@ import com.opencagedata.jopencage.model.JOpenCageForwardRequest;
 import com.opencagedata.jopencage.model.JOpenCageLatLng;
 import com.opencagedata.jopencage.model.JOpenCageResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class RideRequestService {
     private final RideRequestRepository requestRepository;
     private final PassengerRepository passengerRepository;
@@ -50,7 +52,7 @@ public class RideRequestService {
 
         if (canOderRide(request, passenger)) {
             requestRepository.save(rideRequest);
-            return Map.of("message", "ride request for ride. Driver will be assign shortly");
+            return Map.of("message", "successfully request for ride. Driver will be assign shortly");
         }
         return Map.of("message", "unable to order. Load your account");
     }
@@ -72,6 +74,9 @@ public class RideRequestService {
                 getCoordinate(request.getEndLocation()));
 
         double costOfRide = distance * COST_PER_kM;
+        log.info("Distance {}", distance);
+        log.info("cost of ride {}", costOfRide);
+        log.info("passenger account {}", passenger.getAccountBalance());
 
         return (costOfRide < passenger.getAccountBalance());
     }
@@ -104,6 +109,7 @@ public class RideRequestService {
         JOpenCageResponse response = jOpenCageGeocoder.forward(request);
         JOpenCageLatLng firstResultLatLng = response.getFirstPosition();
 
+        log.info("Coordinate {} {}", firstResultLatLng.getLat(), firstResultLatLng.getLng());
         return new double[]{firstResultLatLng.getLat(), firstResultLatLng.getLng()};
     }
 

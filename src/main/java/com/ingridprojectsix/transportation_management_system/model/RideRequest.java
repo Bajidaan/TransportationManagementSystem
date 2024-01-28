@@ -23,14 +23,16 @@ public class RideRequest {
     private LocalDate date;
     private String startLocation;
     private String endLocation;
+
+    @Enumerated(EnumType.STRING)
     private RideRequestStatus status;
     private LocalTime time;
 
     public RideRequest(RideRequestDto requestDto) {
-        this.date = requestDto.getDate();
+        this.date = LocalDate.now();
         this.startLocation = requestDto.getStartLocation();
         this.endLocation = requestDto.getEndLocation();
-        this.status = requestDto.getStatus();
-        this.time = requestDto.getTime();
+        this.status = RideRequestStatus.PENDING;
+        this.time = LocalTime.now();
     }
 }

@@ -15,9 +15,6 @@ import java.time.LocalTime;
 @NoArgsConstructor
 public class RideRequestDto {
     private Long passengerId;
-    private LocalDate date;
     private String startLocation;
     private String endLocation;
-    private RideRequestStatus status;
-    private LocalTime time;
 }

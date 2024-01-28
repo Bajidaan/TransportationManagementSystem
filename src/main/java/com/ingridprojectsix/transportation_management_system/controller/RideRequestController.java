@@ -35,7 +35,7 @@ public class RideRequestController {
         return requestService.getRideRequestByPassengerId(passengerId);
     }
 
-    @PostMapping("")
+    @PostMapping("/request")
     @ResponseStatus(HttpStatus.CREATED)
     public Map<String, String> makeRequest(@RequestBody RideRequestDto request) {
         return requestService.saveRideRequest(request);

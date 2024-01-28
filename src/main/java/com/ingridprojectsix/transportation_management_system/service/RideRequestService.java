@@ -1,10 +1,13 @@
 package com.ingridprojectsix.transportation_management_system.service;
 
 import com.ingridprojectsix.transportation_management_system.dto.RideRequestDto;
+import com.ingridprojectsix.transportation_management_system.exception.DriverNotFoundException;
 import com.ingridprojectsix.transportation_management_system.exception.RideRequestNotFoundException;
+import com.ingridprojectsix.transportation_management_system.model.Driver;
 import com.ingridprojectsix.transportation_management_system.model.DriverStatus;
 import com.ingridprojectsix.transportation_management_system.model.Passenger;
 import com.ingridprojectsix.transportation_management_system.model.RideRequest;
+import com.ingridprojectsix.transportation_management_system.repository.DriverRepository;
 import com.ingridprojectsix.transportation_management_system.repository.PassengerRepository;
 import com.ingridprojectsix.transportation_management_system.repository.RideRequestRepository;
 import com.opencagedata.jopencage.JOpenCageGeocoder;
@@ -24,6 +27,7 @@ import java.util.Map;
 public class RideRequestService {
     private final RideRequestRepository requestRepository;
     private final PassengerRepository passengerRepository;
+    private final DriverRepository driverRepository;
     private static final String KEY = "4d182eb0a92745f398a544127462b36b";
     private static final double EARTH_RADIUS = 6371;
     private static final double COST_PER_kM = 200;
@@ -81,7 +85,7 @@ public class RideRequestService {
         return (costOfRide < passenger.getAccountBalance());
     }
 
-    public DriverStatus assignDriver(List<DriverStatus> drivers, double[] passengerCoordinate) {
+    public Driver assignDriver(List<DriverStatus> drivers, double[] passengerCoordinate) {
         double minDistance = 5000;
         DriverStatus assignDriver = null;
 
@@ -96,7 +100,11 @@ public class RideRequestService {
                 assignDriver = driver;
             }
         }
-        return assignDriver;
+
+        assert assignDriver != null;
+
+        return driverRepository.findById(assignDriver.getDriver()
+                .getDriverId()).orElseThrow(DriverNotFoundException::new);
     }
 
 

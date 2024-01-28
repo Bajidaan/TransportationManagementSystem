@@ -24,7 +24,7 @@ public class Passenger {
     private List<Rides> rides;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "passenger_id", unique = true)
+    @JoinColumn(name = "user_id")
     private Users user;
 
     @Column(name = "name")
@@ -42,4 +42,5 @@ public class Passenger {
 
     @Column(name = "account_balance")
     private double accountBalance = 0.0;
+
 }

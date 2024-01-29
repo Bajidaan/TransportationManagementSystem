@@ -11,7 +11,6 @@ public class RiderRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long requestId;
-
     @ManyToOne
     @JoinColumn(name = "passenger_id")
     private Passenger passenger;
@@ -20,11 +19,5 @@ public class RiderRequest {
     private double endLocation;
     private RequestStatus status;
     private LocalTime time;
-
-
-
-
-
-
 
 }

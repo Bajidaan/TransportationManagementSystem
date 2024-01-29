@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Entity
@@ -20,7 +21,7 @@ public class Driver {
     @Column(name = "DriverId")
     private Long driverId;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "User_id", unique = true)
     private Users user;
 
@@ -52,7 +53,7 @@ public class Driver {
     @Column(name = "Location")
     private String location;
 
-    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "driver")
-    private Rider rider;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "drivers")
+    private List<Rides> rides;
 
 }

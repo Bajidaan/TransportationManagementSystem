@@ -20,7 +20,7 @@ public class Passenger {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long passengerId;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "passengers")
+    @OneToMany(cascade = CascadeType.ALL)  @JoinColumn(name = "passenger_id")
     private List<Rides> rides;
 
     @OneToOne(cascade = CascadeType.ALL)

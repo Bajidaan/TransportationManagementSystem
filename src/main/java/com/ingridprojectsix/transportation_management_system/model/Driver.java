@@ -53,7 +53,7 @@ public class Driver {
     @Column(name = "Location")
     private String location;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "drivers")
+    @OneToMany(cascade = CascadeType.ALL) @JoinColumn(name = "driver_id")
     private List<Rides> rides;
 
 }

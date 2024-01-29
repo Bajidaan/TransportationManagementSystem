@@ -1,7 +1,7 @@
 package com.ingridprojectsix.transportation_management_system.model;
 
-public enum RequestStatus {
+public enum RideRequestStatus {
     PENDING,
-    IN_PROGRESS,
-    COMPLETED
+    ACCEPTED,
+    NO_RIDE
 }

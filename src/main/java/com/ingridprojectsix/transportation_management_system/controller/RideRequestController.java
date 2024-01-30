@@ -47,6 +47,10 @@ public class RideRequestController {
         return requestService.updateRequest(requestId, request);
     }
 
-
+    @PutMapping("/updateStatus/{requestId}")
+    @ResponseStatus(HttpStatus.OK)
+    public Map<String, String> updateStatus(@PathVariable Long requestId) {
+        return requestService.updateStatus(requestId);
+    }
 
 }

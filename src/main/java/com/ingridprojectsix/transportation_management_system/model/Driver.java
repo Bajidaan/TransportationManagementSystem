@@ -11,8 +11,6 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.List;
 
-
-
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -30,12 +28,12 @@ public class Driver {
     private Users user;
 
     @NotBlank(message = "first name is required")
-    @Size(min = 6, max = 50, message = "first name must be within the range of 6 - 50 characters")
+//    @Size(min = 6, max = 50, message = "first name must be within the range of 6 - 50 characters")
     @Column(name = "first_name")
     private String firstName;
 
     @NotBlank(message = "first name is required")
-    @Size(min = 6, max = 50, message = "last name must be within the range of 6 - 50 characters")
+//    @Size(min = 6, max = 50, message = "last name must be within the range of 6 - 50 characters")
     @Column(name = "last_name")
     private String lastName;
 
@@ -47,7 +45,7 @@ public class Driver {
     @Column(name = "plate_number", unique = true)
     private String plateNumber;
 
-    @NotBlank(message = "car model name is required")
+//    @NotBlank(message = "car model name is required")
     @Column(name = "car_model")
     private String carModel;
 
@@ -58,11 +56,11 @@ public class Driver {
     @Column(name = "account_balance")
     private Double accountBalance;
 
-    @NotBlank
+//    @NotBlank
     @Column(name = "registration_date")
     private LocalDateTime registrationDate;
 
-    @NotBlank
+//    @NotBlank
     @Column(name = "location")
     private String location;
 

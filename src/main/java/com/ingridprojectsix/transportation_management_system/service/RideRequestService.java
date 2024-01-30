@@ -1,15 +1,11 @@
 package com.ingridprojectsix.transportation_management_system.service;
 
 import com.ingridprojectsix.transportation_management_system.dto.RideRequestDto;
+import com.ingridprojectsix.transportation_management_system.dto.UpdateRideRequest;
 import com.ingridprojectsix.transportation_management_system.exception.DriverNotFoundException;
 import com.ingridprojectsix.transportation_management_system.exception.RideRequestNotFoundException;
-import com.ingridprojectsix.transportation_management_system.model.Driver;
-import com.ingridprojectsix.transportation_management_system.model.DriverStatus;
-import com.ingridprojectsix.transportation_management_system.model.Passenger;
-import com.ingridprojectsix.transportation_management_system.model.RideRequest;
-import com.ingridprojectsix.transportation_management_system.repository.DriverRepository;
-import com.ingridprojectsix.transportation_management_system.repository.PassengerRepository;
-import com.ingridprojectsix.transportation_management_system.repository.RideRequestRepository;
+import com.ingridprojectsix.transportation_management_system.model.*;
+import com.ingridprojectsix.transportation_management_system.repository.*;
 import com.opencagedata.jopencage.JOpenCageGeocoder;
 import com.opencagedata.jopencage.model.JOpenCageForwardRequest;
 import com.opencagedata.jopencage.model.JOpenCageLatLng;
@@ -28,6 +24,8 @@ public class RideRequestService {
     private final RideRequestRepository requestRepository;
     private final PassengerRepository passengerRepository;
     private final DriverRepository driverRepository;
+    private final DriverStatusRepository driverStatusRepository;
+    private final RidesRepository ridesRepository;
     private static final String KEY = "4d182eb0a92745f398a544127462b36b";
     private static final double EARTH_RADIUS = 6371;
     private static final double COST_PER_kM = 200;
@@ -72,6 +70,45 @@ public class RideRequestService {
         return Map.of("message", "update successfully");
     }
 
+    public Map<String, String> updateStatus(Long requestId) {
+        RideRequest request = requestRepository.findById(requestId)
+                .orElseThrow(RideRequestNotFoundException::new);
+
+        List<DriverStatus> drivers = driverStatusRepository.findAll();
+        Driver assignedDriver = assignDriver(drivers, getCoordinate(request.getStartLocation()));
+
+        double distance = calculateDistance(getCoordinate(request.getStartLocation()),
+                getCoordinate(request.getEndLocation()));
+
+        if (assignedDriver == null) {
+            request.setStatus(RideRequestStatus.NO_RIDE);
+            requestRepository.save(request);
+            return Map.of("message", "No ride currently");
+        }
+
+        request.setStatus(RideRequestStatus.ACCEPTED);
+        requestRepository.save(request);
+        ridesRepository.save(convertToRides(request,
+                    distance * COST_PER_kM, assignedDriver));
+
+        return Map.of("message", "A driver as been assign");
+    }
+
+    private Rides convertToRides(RideRequest request, double fare, Driver driver) {
+        Rides rides = new Rides();
+
+        rides.setPassengers(request.getPassenger());
+        rides.setStartLocation(request.getStartLocation());
+        rides.setEndLocation(request.getEndLocation());
+        rides.setFare(fare);
+        rides.setStatus(RequestStatus.PENDING);
+        rides.setStartTime(null);
+        rides.setEndTime(null);
+        rides.setDrivers(driver);
+
+        return rides;
+    }
+
     private boolean canOderRide(RideRequestDto request, Passenger passenger) {
 
         double distance = calculateDistance(getCoordinate(request.getStartLocation()),
@@ -101,7 +138,9 @@ public class RideRequestService {
             }
         }
 
-        assert assignDriver != null;
+        if (assignDriver == null) {
+            return null;
+        }
 
         return driverRepository.findById(assignDriver.getDriver()
                 .getDriverId()).orElseThrow(DriverNotFoundException::new);

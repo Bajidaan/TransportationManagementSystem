@@ -1,10 +1,7 @@
 package com.ingridprojectsix.transportation_management_system.config;
 
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
@@ -30,7 +27,7 @@ public class JwtTokenProvider {
                 .setSubject(username)
                 .setIssuedAt(currentDate)
                 .setExpiration(expirateDate)
-                .signWith(key())
+                .signWith(key(), SignatureAlgorithm.HS256)
                 .compact();
     }
 

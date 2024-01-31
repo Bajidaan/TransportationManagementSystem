@@ -1,10 +1,7 @@
 package com.ingridprojectsix.transportation_management_system.model;
 
 import com.ingridprojectsix.transportation_management_system.model.domain.Role;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,6 +21,8 @@ public class Users {
 
     private String fullName;
     private String email;
+    private String password;
+    @Enumerated(EnumType.STRING)
     private Role role;
     private LocalDateTime RegistrationDate;
 }

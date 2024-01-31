@@ -1,5 +1,6 @@
 package com.ingridprojectsix.transportation_management_system.config;
 
+import com.ingridprojectsix.transportation_management_system.service.CustomUsersDetailsService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,14 +18,13 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.stereotype.Component;
 
 @Configuration
-@EnableWebSecurity
-@EnableMethodSecurity
 @AllArgsConstructor
 public class SecurityConfig {
 
-    private final UserDetailsService userDetailsService;
+    private CustomUsersDetailsService userDetailsService;
 
 
     @Bean
@@ -45,15 +45,5 @@ public class SecurityConfig {
         return authenticationProvider;
     }
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(authorize ->
-                        authorize.requestMatchers(HttpMethod.POST, "").permitAll()
-                                .anyRequest().permitAll());
-        httpSecurity.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-        httpSecurity.authenticationProvider(authenticationProvider());
-        return httpSecurity.build();
 
-    }
 }

@@ -1,7 +1,6 @@
 package com.ingridprojectsix.transportation_management_system.service;
 
 import com.ingridprojectsix.transportation_management_system.dto.RideRequestDto;
-import com.ingridprojectsix.transportation_management_system.dto.UpdateRideRequest;
 import com.ingridprojectsix.transportation_management_system.exception.DriverNotFoundException;
 import com.ingridprojectsix.transportation_management_system.exception.RideRequestNotFoundException;
 import com.ingridprojectsix.transportation_management_system.model.*;
@@ -132,7 +131,7 @@ public class RideRequestService {
             double distance = calculateDistance(passengerCoordinate, driverLocation);
 
 
-            if (driver.isAvailable() && distance < minDistance) {
+            if (driver.isAvailability() && distance < minDistance) {
                 minDistance = distance;
                 assignDriver = driver;
             }

@@ -1,5 +1,6 @@
 package com.ingridprojectsix.transportation_management_system.model;
 
+import com.ingridprojectsix.transportation_management_system.dto.DriverStatusDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,6 +23,11 @@ public class DriverStatus {
 
     private double longitude;
 
-    private boolean isAvailable;
+    private boolean availability;
 
+    public DriverStatus(DriverStatusDto driverStatusDto) {
+        this.latitude = driverStatusDto.getLatitude();
+        this.longitude = driverStatusDto.getLongitude();
+        this.availability = driverStatusDto.isAvailability();
+    }
 }

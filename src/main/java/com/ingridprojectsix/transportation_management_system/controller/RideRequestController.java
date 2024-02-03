@@ -2,6 +2,7 @@ package com.ingridprojectsix.transportation_management_system.controller;
 
 import com.ingridprojectsix.transportation_management_system.dto.RideRequestDto;
 import com.ingridprojectsix.transportation_management_system.dto.RideRequestUpdate;
+import com.ingridprojectsix.transportation_management_system.dto.UpdateRideRequest;
 import com.ingridprojectsix.transportation_management_system.model.RideRequest;
 import com.ingridprojectsix.transportation_management_system.service.RideRequestService;
 import jakarta.mail.MessagingException;
@@ -51,8 +52,8 @@ public class RideRequestController {
 
     @PutMapping("/updateStatus/{requestId}")
     @ResponseStatus(HttpStatus.OK)
-    public Map<String, String> updateStatus(@PathVariable Long requestId) throws MessagingException {
-        return requestService.updateStatus(requestId);
+    public Map<String, String> updateStatus(@PathVariable Long requestId, @RequestBody UpdateRideRequest status) throws MessagingException {
+        return requestService.driverResponses(requestId, status);
     }
 
 }

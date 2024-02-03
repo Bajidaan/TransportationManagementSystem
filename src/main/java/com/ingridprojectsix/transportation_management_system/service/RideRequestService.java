@@ -126,42 +126,13 @@ public class RideRequestService {
                     assignedDriver.getFirstName() + " " + assignedDriver.getLastName(),
                     assignedDriver.getLicenseNumber(), "noon", SUPPORT_CONTACT);
 
-            driverList.remove(driverStatus);
-
-            assignedDriver = assignDriver(driverList, getCoordinate(request.getStartLocation()));
-
             return MessageResponse.displayMessage("A driver as been assign");
         }
 
+        driverList.remove(driverStatus);
+
+        assignedDriver = assignDriver(driverList, getCoordinate(request.getStartLocation()));
         return MessageResponse.displayMessage("Ride rejected, Another driver will be assigned");
-    }
-
-    public Map<String, String> updateStatus(Long requestId) throws MessagingException {
-        RideRequest request = requestRepository.findById(requestId)
-                .orElseThrow(RideRequestNotFoundException::new);
-
-        List<DriverStatus> drivers = driverStatusRepository.findAll();
-        Driver assignedDriver = assignDriver(drivers, getCoordinate(request.getStartLocation()));
-
-        double distance = calculateDistance(getCoordinate(request.getStartLocation()),
-                getCoordinate(request.getEndLocation()));
-
-        if (assignedDriver == null) {
-            request.setStatus(RideRequestStatus.NO_RIDE);
-            requestRepository.save(request);
-            return Map.of("message", "No ride currently");
-        }
-
-        request.setStatus(RideRequestStatus.ACCEPTED);
-        requestRepository.save(request);
-        ridesRepository.save(convertToRides(request,
-                    distance * COST_PER_kM, assignedDriver));
-
-        emailService.sendRideAssignedEmail(" ", request.getPassenger().getName(),
-                request.getStartLocation(), request.getEndLocation(),
-                assignedDriver.getFirstName() + " " + assignedDriver.getLastName(),
-                assignedDriver.getLicenseNumber(), "noon", SUPPORT_CONTACT);
-        return Map.of("message", "A driver as been assign");
     }
 
     private Rides convertToRides(RideRequest request, double fare, Driver driver) {

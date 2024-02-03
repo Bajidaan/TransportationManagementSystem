@@ -1,29 +1,32 @@
 package com.ingridprojectsix.transportation_management_system.model;
 
-import com.ingridprojectsix.transportation_management_system.model.domain.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Data
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@Entity
-public class Users {
+@Data
+public class Notification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long notificationId;
 
-    private String firstName;
-    private String lastName;
-    private String email;
-    private String password;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private Users user;
+
+    private String message;
+
+    private LocalDateTime notificationTime;
+
+    private boolean isRead;
+
     @Enumerated(EnumType.STRING)
-    private Role role;
-    private LocalDateTime RegistrationDate;
+    @Column(name = "status", nullable = false)
+    private NotificationStatus status;
 }

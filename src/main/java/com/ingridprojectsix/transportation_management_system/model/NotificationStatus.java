@@ -1,8 +1,8 @@
 package com.ingridprojectsix.transportation_management_system.model;
 
+public enum NotificationStatus {
 
-public enum RequestStatus {
+    ACCEPTED,
     PENDING,
-    IN_PROGRESS,
-    COMPLETED
+    REJECTED
 }

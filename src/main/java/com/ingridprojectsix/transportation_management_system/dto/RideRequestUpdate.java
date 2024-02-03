@@ -1,11 +1,13 @@
 package com.ingridprojectsix.transportation_management_system.dto;
 
-import com.ingridprojectsix.transportation_management_system.model.RideRequestStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-public class UpdateRideRequest {
-    boolean isAccepted;
+@AllArgsConstructor
+@NoArgsConstructor
+public class RideRequestUpdate {
+    private String startLocation;
+    private String endLocation;
 }

@@ -1,4 +1,4 @@
-package com.ingridprojectsix.transportation_management_system.util;
+package com.ingridprojectsix.transportation_management_system.utils;
 
 import java.util.Map;
 

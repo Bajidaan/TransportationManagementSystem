@@ -32,7 +32,6 @@ public class RideRequest {
         this.date = LocalDate.now();
         this.startLocation = requestDto.getStartLocation();
         this.endLocation = requestDto.getEndLocation();
-        this.status = RideRequestStatus.PENDING;
         this.time = LocalTime.now();
     }
 }

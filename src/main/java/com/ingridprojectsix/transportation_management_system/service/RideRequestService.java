@@ -6,11 +6,13 @@ import com.ingridprojectsix.transportation_management_system.exception.DriverNot
 import com.ingridprojectsix.transportation_management_system.exception.RideRequestNotFoundException;
 import com.ingridprojectsix.transportation_management_system.model.*;
 import com.ingridprojectsix.transportation_management_system.repository.*;
+
 import com.opencagedata.jopencage.JOpenCageGeocoder;
 import com.opencagedata.jopencage.model.JOpenCageForwardRequest;
 import com.opencagedata.jopencage.model.JOpenCageLatLng;
 import com.opencagedata.jopencage.model.JOpenCageResponse;
 import lombok.RequiredArgsConstructor;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +28,7 @@ public class RideRequestService {
     private final DriverRepository driverRepository;
     private final DriverStatusRepository driverStatusRepository;
     private final RidesRepository ridesRepository;
+
     private static final String KEY = "4d182eb0a92745f398a544127462b36b";
     private static final double EARTH_RADIUS = 6371;
     private static final double COST_PER_kM = 200;
@@ -69,6 +72,10 @@ public class RideRequestService {
 
         return Map.of("message", "update successfully");
     }
+
+    public boolean canOderRide(Long passengerId, RideRequest request) {
+        Passenger passenger = passengerRepository.findById(passengerId)
+                .orElseThrow();
 
     public Map<String, String> updateStatus(Long requestId) {
         RideRequest request = requestRepository.findById(requestId)
@@ -115,6 +122,12 @@ public class RideRequestService {
                 getCoordinate(request.getEndLocation()));
 
         double costOfRide = distance * COST_PER_kM;
+
+        //return new ResponseEntity<>(Map.of("message", "Insufficient account balance"), HttpStatus.BAD_REQUEST);
+        return (costOfRide < passenger.getAccountBalance());
+    }
+
+    public DriverStatus assignDriver(List<DriverStatus> drivers, double[] passengerCoordinate) {
         log.info("Distance {}", distance);
         log.info("cost of ride {}", costOfRide);
         log.info("passenger account {}", passenger.getAccountBalance());
@@ -123,6 +136,7 @@ public class RideRequestService {
     }
 
     public Driver assignDriver(List<DriverStatus> drivers, double[] passengerCoordinate) {
+      
         double minDistance = 5000;
         DriverStatus assignDriver = null;
 
@@ -137,6 +151,8 @@ public class RideRequestService {
                 assignDriver = driver;
             }
         }
+      
+        return assignDriver;
 
         if (assignDriver == null) {
             return null;
@@ -156,7 +172,9 @@ public class RideRequestService {
         JOpenCageResponse response = jOpenCageGeocoder.forward(request);
         JOpenCageLatLng firstResultLatLng = response.getFirstPosition();
 
+
         log.info("Coordinate {} {}", firstResultLatLng.getLat(), firstResultLatLng.getLng());
+
         return new double[]{firstResultLatLng.getLat(), firstResultLatLng.getLng()};
     }
 

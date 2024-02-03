@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/rideRequest")
+@RequestMapping("api/v1/rideRequest")
 @RequiredArgsConstructor
 public class RideRequestController {
 
@@ -52,5 +52,4 @@ public class RideRequestController {
     public Map<String, String> updateStatus(@PathVariable Long requestId) {
         return requestService.updateStatus(requestId);
     }
-
 }

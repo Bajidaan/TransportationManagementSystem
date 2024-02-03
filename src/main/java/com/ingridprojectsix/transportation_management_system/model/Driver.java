@@ -3,7 +3,6 @@ package com.ingridprojectsix.transportation_management_system.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -37,6 +36,14 @@ public class Driver {
     @Column(name = "last_name")
     private String lastName;
 
+    @NotBlank(message = "email required")
+    @Column(name = "email")
+    private String email;
+
+    @NotBlank(message = "phone number is required")
+    @Column(name = "phone_number")
+    private String phoneNumber;
+
     @NotBlank(message = "License number is required")
     @Column(name = "licence_number", unique = true)
     private String licenseNumber;
@@ -49,19 +56,19 @@ public class Driver {
     @Column(name = "car_model")
     private String carModel;
 
-    @Column(name = "AvailabilityStatus")
-    @Enumerated(EnumType.STRING)
-    private AvailabilityStatus availabilityStatus;
-
     @Column(name = "account_balance")
     private Double accountBalance;
+
+    //    @NotBlank
+    @Column(name = "registration_date")
+    private LocalDateTime registrationDate;
+
+    //    @NotBlank
+    @Column(name = "location")
+    private String address;
 
 //    @NotBlank
     @Column(name = "registration_date")
     private LocalDateTime registrationDate;
-
-//    @NotBlank
-    @Column(name = "location")
-    private String location;
-
 }
+

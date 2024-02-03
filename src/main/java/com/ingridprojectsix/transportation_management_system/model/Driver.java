@@ -1,5 +1,6 @@
 package com.ingridprojectsix.transportation_management_system.model;
 
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -7,7 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -51,7 +52,7 @@ public class Driver {
     @Column(name = "plate_number", unique = true)
     private String plateNumber;
 
-    //    @NotBlank(message = "car model name is required")
+//    @NotBlank(message = "car model name is required")
     @Column(name = "car_model")
     private String carModel;
 
@@ -66,5 +67,8 @@ public class Driver {
     @Column(name = "location")
     private String address;
 
+//    @NotBlank
+    @Column(name = "registration_date")
+    private LocalDateTime registrationDate;
 }
 

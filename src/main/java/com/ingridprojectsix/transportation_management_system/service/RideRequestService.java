@@ -1,29 +1,34 @@
 package com.ingridprojectsix.transportation_management_system.service;
 
+import com.ingridprojectsix.transportation_management_system.dto.RideRequestDto;
+import com.ingridprojectsix.transportation_management_system.dto.UpdateRideRequest;
+import com.ingridprojectsix.transportation_management_system.exception.DriverNotFoundException;
 import com.ingridprojectsix.transportation_management_system.exception.RideRequestNotFoundException;
-import com.ingridprojectsix.transportation_management_system.model.DriverStatus;
-import com.ingridprojectsix.transportation_management_system.model.Passenger;
-import com.ingridprojectsix.transportation_management_system.model.RideRequest;
-import com.ingridprojectsix.transportation_management_system.repository.PassengerRepository;
-import com.ingridprojectsix.transportation_management_system.repository.RideRequestRepository;
+import com.ingridprojectsix.transportation_management_system.model.*;
+import com.ingridprojectsix.transportation_management_system.repository.*;
+
 import com.opencagedata.jopencage.JOpenCageGeocoder;
 import com.opencagedata.jopencage.model.JOpenCageForwardRequest;
 import com.opencagedata.jopencage.model.JOpenCageLatLng;
 import com.opencagedata.jopencage.model.JOpenCageResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.sql.Driver;
 import java.util.List;
 import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class RideRequestService {
     private final RideRequestRepository requestRepository;
     private final PassengerRepository passengerRepository;
+    private final DriverRepository driverRepository;
+    private final DriverStatusRepository driverStatusRepository;
+    private final RidesRepository ridesRepository;
+
     private static final String KEY = "4d182eb0a92745f398a544127462b36b";
     private static final double EARTH_RADIUS = 6371;
     private static final double COST_PER_kM = 200;
@@ -43,6 +48,20 @@ public class RideRequestService {
                .orElseThrow(RideRequestNotFoundException::new);
     }
 
+    public Map<String, String> saveRideRequest(RideRequestDto request) {
+        Passenger passenger = passengerRepository.findById(request.getPassengerId())
+                .orElseThrow();
+
+       RideRequest rideRequest = new RideRequest(request);
+       rideRequest.setPassenger(passenger);
+
+        if (canOderRide(request, passenger)) {
+            requestRepository.save(rideRequest);
+            return Map.of("message", "successfully request for ride. Driver will be assign shortly");
+        }
+        return Map.of("message", "unable to order. Load your account");
+    }
+
     public Map<String, String> updateRequest(Long requestId, RideRequest request) {
         RideRequest toUpdate = requestRepository.findById(requestId)
                 .orElseThrow(RideRequestNotFoundException::new);
@@ -58,6 +77,47 @@ public class RideRequestService {
         Passenger passenger = passengerRepository.findById(passengerId)
                 .orElseThrow();
 
+    public Map<String, String> updateStatus(Long requestId) {
+        RideRequest request = requestRepository.findById(requestId)
+                .orElseThrow(RideRequestNotFoundException::new);
+
+        List<DriverStatus> drivers = driverStatusRepository.findAll();
+        Driver assignedDriver = assignDriver(drivers, getCoordinate(request.getStartLocation()));
+
+        double distance = calculateDistance(getCoordinate(request.getStartLocation()),
+                getCoordinate(request.getEndLocation()));
+
+        if (assignedDriver == null) {
+            request.setStatus(RideRequestStatus.NO_RIDE);
+            requestRepository.save(request);
+            return Map.of("message", "No ride currently");
+        }
+
+        request.setStatus(RideRequestStatus.ACCEPTED);
+        requestRepository.save(request);
+        ridesRepository.save(convertToRides(request,
+                    distance * COST_PER_kM, assignedDriver));
+
+        return Map.of("message", "A driver as been assign");
+    }
+
+    private Rides convertToRides(RideRequest request, double fare, Driver driver) {
+        Rides rides = new Rides();
+
+        rides.setPassengers(request.getPassenger());
+        rides.setStartLocation(request.getStartLocation());
+        rides.setEndLocation(request.getEndLocation());
+        rides.setFare(fare);
+        rides.setStatus(RequestStatus.PENDING);
+        rides.setStartTime(null);
+        rides.setEndTime(null);
+        rides.setDrivers(driver);
+
+        return rides;
+    }
+
+    private boolean canOderRide(RideRequestDto request, Passenger passenger) {
+
         double distance = calculateDistance(getCoordinate(request.getStartLocation()),
                 getCoordinate(request.getEndLocation()));
 
@@ -68,6 +128,15 @@ public class RideRequestService {
     }
 
     public DriverStatus assignDriver(List<DriverStatus> drivers, double[] passengerCoordinate) {
+        log.info("Distance {}", distance);
+        log.info("cost of ride {}", costOfRide);
+        log.info("passenger account {}", passenger.getAccountBalance());
+
+        return (costOfRide < passenger.getAccountBalance());
+    }
+
+    public Driver assignDriver(List<DriverStatus> drivers, double[] passengerCoordinate) {
+      
         double minDistance = 5000;
         DriverStatus assignDriver = null;
 
@@ -82,7 +151,15 @@ public class RideRequestService {
                 assignDriver = driver;
             }
         }
+      
         return assignDriver;
+
+        if (assignDriver == null) {
+            return null;
+        }
+
+        return driverRepository.findById(assignDriver.getDriver()
+                .getDriverId()).orElseThrow(DriverNotFoundException::new);
     }
 
 
@@ -94,6 +171,9 @@ public class RideRequestService {
 
         JOpenCageResponse response = jOpenCageGeocoder.forward(request);
         JOpenCageLatLng firstResultLatLng = response.getFirstPosition();
+
+
+        log.info("Coordinate {} {}", firstResultLatLng.getLat(), firstResultLatLng.getLng());
 
         return new double[]{firstResultLatLng.getLat(), firstResultLatLng.getLng()};
     }

@@ -1,5 +1,6 @@
 package com.ingridprojectsix.transportation_management_system.controller;
 
+import com.ingridprojectsix.transportation_management_system.dto.RideRequestDto;
 import com.ingridprojectsix.transportation_management_system.model.RideRequest;
 import com.ingridprojectsix.transportation_management_system.service.RideRequestService;
 import lombok.RequiredArgsConstructor;
@@ -34,12 +35,21 @@ public class RideRequestController {
         return requestService.getRideRequestByPassengerId(passengerId);
     }
 
+    @PostMapping("/request")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Map<String, String> makeRequest(@RequestBody RideRequestDto request) {
+        return requestService.saveRideRequest(request);
+    }
+
     @PutMapping("{requestId}")
     @ResponseStatus(HttpStatus.OK)
     public Map<String, String> updateRideRequest(@PathVariable Long requestId, RideRequest request) {
         return requestService.updateRequest(requestId, request);
     }
 
-
-
+    @PutMapping("/updateStatus/{requestId}")
+    @ResponseStatus(HttpStatus.OK)
+    public Map<String, String> updateStatus(@PathVariable Long requestId) {
+        return requestService.updateStatus(requestId);
+    }
 }

@@ -5,11 +5,14 @@ import com.ingridprojectsix.transportation_management_system.exception.DriverNot
 import com.ingridprojectsix.transportation_management_system.model.DriverRegistrationRequest;
 import com.ingridprojectsix.transportation_management_system.model.Driver;
 import com.ingridprojectsix.transportation_management_system.model.DriverUpdateRequest;
+import com.ingridprojectsix.transportation_management_system.model.Users;
 import com.ingridprojectsix.transportation_management_system.repository.DriverRepository;
+import com.ingridprojectsix.transportation_management_system.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,19 +22,33 @@ public class DriverService {
     @Autowired
     private DriverRepository driverRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     public void createDriverDetails(DriverRegistrationRequest driverRequest){
-        Driver driver = convertToDriverEntity(driverRequest);
-        driverRepository.save(driver);
+        Long userId = driverRequest.getUserId();
+        Users user = userRepository.findById(userId).
+                orElseThrow(DriverNotFoundException::new);
+            //Driver driver = new Driver();
+            Driver driver = convertToDriverEntity(driverRequest);
+            driver.setUser(user);
+            driver.setFirstName(user.getFirstName());
+            driver.setLastName(user.getLastName());
+            driver.setEmail(user.getEmail());
+            driver.setRegistrationDate(user.getRegistrationDate());
+
+            driverRepository.save(driver);
+
+
     }
 
     public Driver convertToDriverEntity(DriverRegistrationRequest driverRequest) {
         Driver driver = new Driver();
-        driver.setFirstName(driverRequest.getFirstName());
-        driver.setLastName(driverRequest.getLastName());
+        driver.setPhoneNumber(driverRequest.getPhoneNumber());
         driver.setLicenseNumber(driverRequest.getLicenseNumber());
         driver.setPlateNumber(driverRequest.getPlateNumber());
         driver.setCarModel(driverRequest.getCarModel());
-        driver.setLocation(driverRequest.getLocation());
+        driver.setAddress(driverRequest.getLocation());
         return driver;
     }
 
@@ -72,7 +89,8 @@ public class DriverService {
         existingDriver.setLicenseNumber(updateRequest.getLicenseNumber());
         existingDriver.setPlateNumber(updateRequest.getPlateNumber());
         existingDriver.setCarModel(updateRequest.getCarModel());
-        existingDriver.setLocation(updateRequest.getLocation());
+        existingDriver.setAddress(updateRequest.getLocation());
+        existingDriver.setRegistrationDate(LocalDateTime.parse(updateRequest.getRegistrationDate()));
         return existingDriver;
     }
 }

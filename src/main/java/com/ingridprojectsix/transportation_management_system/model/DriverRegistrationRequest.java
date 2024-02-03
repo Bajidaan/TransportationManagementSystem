@@ -7,8 +7,8 @@ import lombok.Data;
 @Data
 public class DriverRegistrationRequest {
 
-    private String firstName;
-    private String lastName;
+    private Long userId;
+    private String phoneNumber;
     private String licenseNumber;
     private String plateNumber;
     private String carModel;

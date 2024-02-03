@@ -2,7 +2,6 @@ package com.ingridprojectsix.transportation_management_system.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,19 +21,27 @@ public class Driver {
     @Column(name = "DriverId")
     private Long driverId;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "User_id", unique = true)
     private Users user;
 
     @NotBlank(message = "first name is required")
-    @Size(min = 6, max = 50, message = "first name must be within the range of 6 - 50 characters")
+//    @Size(min = 6, max = 50, message = "first name must be within the range of 6 - 50 characters")
     @Column(name = "first_name")
     private String firstName;
 
     @NotBlank(message = "first name is required")
-    @Size(min = 6, max = 50, message = "last name must be within the range of 6 - 50 characters")
+//    @Size(min = 6, max = 50, message = "last name must be within the range of 6 - 50 characters")
     @Column(name = "last_name")
     private String lastName;
+
+    @NotBlank(message = "email required")
+    @Column(name = "email")
+    private String email;
+
+    @NotBlank(message = "phone number is required")
+    @Column(name = "phone_number")
+    private String phoneNumber;
 
     @NotBlank(message = "License number is required")
     @Column(name = "licence_number", unique = true)
@@ -44,26 +51,20 @@ public class Driver {
     @Column(name = "plate_number", unique = true)
     private String plateNumber;
 
-    @NotBlank(message = "car model name is required")
+    //    @NotBlank(message = "car model name is required")
     @Column(name = "car_model")
     private String carModel;
-
-    @Column(name = "AvailabilityStatus")
-    @Enumerated(EnumType.STRING)
-    private AvailabilityStatus availabilityStatus;
 
     @Column(name = "account_balance")
     private Double accountBalance;
 
-    @NotBlank
+    //    @NotBlank
     @Column(name = "registration_date")
     private LocalDateTime registrationDate;
 
-    @NotBlank
+    //    @NotBlank
     @Column(name = "location")
-    private String location;
-
-    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "driver")
-    private Rider rider;
+    private String address;
 
 }
+

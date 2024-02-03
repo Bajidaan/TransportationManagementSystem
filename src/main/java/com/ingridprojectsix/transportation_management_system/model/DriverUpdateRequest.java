@@ -8,8 +8,11 @@ public class DriverUpdateRequest {
     private Long driverId;
     private String firstName;
     private String lastName;
+    private String phoneNumber;
+    private String email;
     private String licenseNumber;
     private String plateNumber;
     private String carModel;
     private String location;
+    private String registrationDate;
 }

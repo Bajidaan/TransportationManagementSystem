@@ -104,7 +104,7 @@ public class RideRequestService {
         return MessageResponse.displayMessage("update successfully");
     }
 
-    private Map<String, String> driverResponses(Long requestId, UpdateRideRequest status) throws MessagingException {
+    public Map<String, String> driverResponses(Long requestId, UpdateRideRequest status) throws MessagingException {
         RideRequest request = requestRepository.findById(requestId)
                 .orElseThrow(RideRequestNotFoundException::new);
 

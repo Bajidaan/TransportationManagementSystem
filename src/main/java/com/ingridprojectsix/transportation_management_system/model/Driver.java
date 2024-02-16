@@ -1,12 +1,16 @@
 package com.ingridprojectsix.transportation_management_system.model;
-import com.ingridprojectsix.transportation_management_system.dto.AvailabilityStatus;
+
+
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
 
 
 @Entity
@@ -25,35 +29,41 @@ public class Driver {
     @JoinColumn(name = "User_id", unique = true)
     private Users user;
 
-    @Column(name = "FirstName")
+    @NotBlank(message = "first name is required")
+    @Size(min = 6, max = 50, message = "first name must be within the range of 6 - 50 characters")
+    @Column(name = "first_name")
     private String firstName;
 
-    @Column(name = "LastName")
+    @NotBlank(message = "first name is required")
+    @Size(min = 6, max = 50, message = "last name must be within the range of 6 - 50 characters")
+    @Column(name = "last_name")
     private String lastName;
 
-    @Column(name = "LicenceNumber", unique = true)
+    @NotBlank(message = "License number is required")
+    @Column(name = "licence_number", unique = true)
     private String licenseNumber;
 
-    @Column(name = "PlateNumber", unique = true)
+    @NotBlank(message = "Plate number is required")
+    @Column(name = "plate_number", unique = true)
     private String plateNumber;
 
-    @Column(name = "CarDetails")
-    private String carDetails;
+    @NotBlank(message = "car model name is required")
+    @Column(name = "car_model")
+    private String carModel;
 
     @Column(name = "AvailabilityStatus")
     @Enumerated(EnumType.STRING)
     private AvailabilityStatus availabilityStatus;
 
-    @Column(name = "AccountBalance")
+    @Column(name = "account_balance")
     private Double accountBalance;
 
-    @Column(name = "RegistrationDate")
+    @NotBlank
+    @Column(name = "registration_date")
     private LocalDateTime registrationDate;
 
-    @Column(name = "Location")
+    @NotBlank
+    @Column(name = "location")
     private String location;
-
-    @OneToMany(cascade = CascadeType.ALL) @JoinColumn(name = "driver_id")
-    private List<Rides> rides;
 
 }

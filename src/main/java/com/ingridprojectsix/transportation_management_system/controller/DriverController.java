@@ -1,9 +1,9 @@
 package com.ingridprojectsix.transportation_management_system.controller;
 
 import com.ingridprojectsix.transportation_management_system.dto.AccountBalanceDTO;
-import com.ingridprojectsix.transportation_management_system.model.DriverRegistrationRequest;
+import com.ingridprojectsix.transportation_management_system.dto.DriverRegistrationRequest;
 import com.ingridprojectsix.transportation_management_system.model.Driver;
-import com.ingridprojectsix.transportation_management_system.model.DriverUpdateRequest;
+import com.ingridprojectsix.transportation_management_system.dto.DriverUpdateRequest;
 import com.ingridprojectsix.transportation_management_system.service.DriverService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;

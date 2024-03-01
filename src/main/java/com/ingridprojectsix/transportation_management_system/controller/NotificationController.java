@@ -1,8 +1,8 @@
 package com.ingridprojectsix.transportation_management_system.controller;
 
 import com.ingridprojectsix.transportation_management_system.model.Notification;
-import com.ingridprojectsix.transportation_management_system.model.NotificationStatus;
-import com.ingridprojectsix.transportation_management_system.model.NotificationUpdateRequest;
+import com.ingridprojectsix.transportation_management_system.model.domain.NotificationStatus;
+import com.ingridprojectsix.transportation_management_system.dto.NotificationUpdateRequest;
 import com.ingridprojectsix.transportation_management_system.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

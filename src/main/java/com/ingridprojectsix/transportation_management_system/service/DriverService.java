@@ -2,9 +2,9 @@ package com.ingridprojectsix.transportation_management_system.service;
 
 import com.ingridprojectsix.transportation_management_system.dto.AccountBalanceDTO;
 import com.ingridprojectsix.transportation_management_system.exception.DriverNotFoundException;
-import com.ingridprojectsix.transportation_management_system.model.DriverRegistrationRequest;
+import com.ingridprojectsix.transportation_management_system.dto.DriverRegistrationRequest;
 import com.ingridprojectsix.transportation_management_system.model.Driver;
-import com.ingridprojectsix.transportation_management_system.model.DriverUpdateRequest;
+import com.ingridprojectsix.transportation_management_system.dto.DriverUpdateRequest;
 import com.ingridprojectsix.transportation_management_system.model.Users;
 import com.ingridprojectsix.transportation_management_system.repository.DriverRepository;
 import com.ingridprojectsix.transportation_management_system.repository.UserRepository;
@@ -48,7 +48,7 @@ public class DriverService {
         driver.setLicenseNumber(driverRequest.getLicenseNumber());
         driver.setPlateNumber(driverRequest.getPlateNumber());
         driver.setCarModel(driverRequest.getCarModel());
-        driver.setAddress(driverRequest.getLocation());
+        driver.setAddress(driverRequest.getAddress());
         return driver;
     }
 
@@ -89,7 +89,7 @@ public class DriverService {
         existingDriver.setLicenseNumber(updateRequest.getLicenseNumber());
         existingDriver.setPlateNumber(updateRequest.getPlateNumber());
         existingDriver.setCarModel(updateRequest.getCarModel());
-        existingDriver.setAddress(updateRequest.getLocation());
+        existingDriver.setAddress(updateRequest.getAddress());
         existingDriver.setRegistrationDate(LocalDateTime.parse(updateRequest.getRegistrationDate()));
         return existingDriver;
     }

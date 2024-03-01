@@ -7,6 +7,7 @@ import com.ingridprojectsix.transportation_management_system.service.RideRequest
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +20,7 @@ public class RideRequestController {
 
     private final RideRequestService requestService;
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/get")
     @ResponseStatus(HttpStatus.OK)
     public List<RideRequest> getAllRequest() {
@@ -49,9 +51,12 @@ public class RideRequestController {
         return requestService.updateRequestByPassenger(requestId, request);
     }
 
-    @PutMapping("/updateStatus/{requestId}")
+    @PutMapping("/updateStatus")
     @ResponseStatus(HttpStatus.OK)
-    public Map<String, String> updateStatus(@PathVariable Long requestId) throws MessagingException {
-        return requestService.updateStatus(requestId);
+    public Map<String, String> updateStatus(@RequestParam Long requestId, @RequestParam boolean status) throws MessagingException {
+        return requestService.driverResponses(requestId, status);
     }
+
+    // "58 Kirikiri Road, Alaiyabiagba, Lagos State, Nigeria"
+    // "2a Ruxton Street, Falomo, Lagos State, Nigeria"
 }

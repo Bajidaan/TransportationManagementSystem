@@ -1,4 +1,4 @@
-package com.ingridprojectsix.transportation_management_system.model;
+package com.ingridprojectsix.transportation_management_system.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

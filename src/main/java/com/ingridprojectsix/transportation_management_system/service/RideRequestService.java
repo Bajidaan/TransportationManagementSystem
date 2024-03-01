@@ -2,10 +2,11 @@ package com.ingridprojectsix.transportation_management_system.service;
 
 import com.ingridprojectsix.transportation_management_system.dto.RideRequestDto;
 import com.ingridprojectsix.transportation_management_system.dto.RideRequestUpdate;
-import com.ingridprojectsix.transportation_management_system.dto.UpdateRideRequest;
 import com.ingridprojectsix.transportation_management_system.exception.DriverNotFoundException;
 import com.ingridprojectsix.transportation_management_system.exception.RideRequestNotFoundException;
 import com.ingridprojectsix.transportation_management_system.model.*;
+import com.ingridprojectsix.transportation_management_system.model.domain.RequestStatus;
+import com.ingridprojectsix.transportation_management_system.model.domain.RideRequestStatus;
 import com.ingridprojectsix.transportation_management_system.repository.*;
 import com.ingridprojectsix.transportation_management_system.utils.MessageResponse;
 import com.opencagedata.jopencage.JOpenCageGeocoder;
@@ -17,7 +18,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -31,14 +33,11 @@ public class RideRequestService {
     private final DriverStatusRepository driverStatusRepository;
     private final RidesRepository ridesRepository;
     private final EmailService emailService;
+
     private static final String KEY = "4d182eb0a92745f398a544127462b36b";
     private static final double EARTH_RADIUS = 6371;
     private static final double COST_PER_kM = 200;
     private static final String SUPPORT_CONTACT = "+234675895490";
-
-    private Driver assignedDriver;
-    List<DriverStatus> driverList;
-
 
     public List<RideRequest> getAllRideRequest() {
         return requestRepository.findAll();
@@ -55,37 +54,47 @@ public class RideRequestService {
     }
 
     public Map<String, String> saveRideRequest(RideRequestDto request) throws MessagingException {
-        assignedDriver = new Driver();
-        driverList = new ArrayList<>();
-
-        driverList = driverStatusRepository.findAll();
-
         Passenger passenger = passengerRepository.findById(request.getPassengerId())
                 .orElseThrow();
 
-        assignedDriver = assignDriver(driverList, getCoordinate(request.getStartLocation()));
+        List<DriverStatus> driverList = driverStatusRepository.findAll();
 
+        Driver assignedDriver = assignDriver(driverList, getCoordinate(request.getStartLocation()));
+
+        DriverStatus driverStatus = null;
+
+        if (assignedDriver != null) {
+            driverStatus = driverStatusRepository.findByDriver_DriverId(assignedDriver.getDriverId())
+                    .orElseThrow(DriverNotFoundException::new);
+        }
 
        RideRequest rideRequest = new RideRequest(request);
-       rideRequest.setPassenger(passenger);
 
         if (canOderRide(request, passenger)) {
             if (assignedDriver == null) {
                 rideRequest.setStatus(RideRequestStatus.NO_RIDE);
                 requestRepository.save(rideRequest);
 
-                emailService.sendNoRideAvailableEmail(passenger.getEmail(), passenger.getName(),
+                emailService.sendNoRideAvailableEmail(passenger.getEmail(), passenger.getFirstName(),
                         request.getStartLocation(), request.getEndLocation(), SUPPORT_CONTACT);
 
                 return MessageResponse.displayMessage("No ride");
             }
 
+            rideRequest.setPassenger(passenger);
+            rideRequest.setCurrentAssignedDriver(assignedDriver);
             rideRequest.setStatus(RideRequestStatus.PENDING);
             requestRepository.save(rideRequest);
-            emailService.sendRideRequestPendingEmail(passenger.getEmail(), passenger.getName(),
+
+            //send email to the passenger
+            emailService.sendRideRequestPendingEmail(passenger.getEmail(), passenger.getFirstName(),
                     request.getStartLocation(), request.getEndLocation(),
                     rideRequest.getTime().toString(), SUPPORT_CONTACT);
 
+            // send email to the Driver
+            emailService.sendRideRequestEmail(assignedDriver.getEmail(), assignedDriver.getLastName(),
+                    passenger.getFirstName(), request.getStartLocation(), request.getEndLocation(),
+                    rideRequest.getTime().toString(), SUPPORT_CONTACT);
 
             return MessageResponse.displayMessage("successfully request for ride. Driver will be assign shortly");
         }
@@ -104,34 +113,61 @@ public class RideRequestService {
         return MessageResponse.displayMessage("update successfully");
     }
 
-    public Map<String, String> driverResponses(Long requestId, UpdateRideRequest status) throws MessagingException {
+    public Map<String, String> driverResponses(Long requestId, boolean status) throws MessagingException {
+        List<DriverStatus> driverList = driverStatusRepository.findAll();
+
         RideRequest request = requestRepository.findById(requestId)
                 .orElseThrow(RideRequestNotFoundException::new);
 
-        DriverStatus driverStatus = driverStatusRepository.findById(assignedDriver.getDriverId())
+        Driver assignedDriver = request.getCurrentAssignedDriver();;
+
+        DriverStatus driverStatus = driverStatusRepository.findByDriver_DriverId(assignedDriver.getDriverId())
                 .orElseThrow(DriverNotFoundException::new);
 
         double distance = calculateDistance(getCoordinate(request.getStartLocation()),
                 getCoordinate(request.getEndLocation()));
 
-        if (status.isAccepted()) {
+        if (status) {
             request.setStatus(RideRequestStatus.ACCEPTED);
+
             ridesRepository.save(convertToRides(request,
                     distance * COST_PER_kM, assignedDriver));
 
             requestRepository.save(request);
 
-            emailService.sendRideAssignedEmail(" ", request.getPassenger().getName(),
-                    request.getStartLocation(), request.getEndLocation(),
-                    assignedDriver.getFirstName() + " " + assignedDriver.getLastName(),
-                    assignedDriver.getLicenseNumber(), "noon", SUPPORT_CONTACT);
+            emailService.sendRideAssignedEmail(request.getPassenger().getEmail(),
+                    request.getPassenger().getFirstName(), request.getStartLocation(), request.getEndLocation(),
+                    assignedDriver.getFirstName(), assignedDriver.getLicenseNumber(),
+                    "noon", SUPPORT_CONTACT);
 
             return MessageResponse.displayMessage("A driver as been assign");
         }
 
-        driverList.remove(driverStatus);
+        driverStatus.setLastRejectionTime(LocalDateTime.now());
+        driverStatusRepository.save(driverStatus);
 
-        assignedDriver = assignDriver(driverList, getCoordinate(request.getStartLocation()));
+        Driver newAssignedDriver = assignDriver(driverList, getCoordinate(request.getStartLocation()));
+
+        if (newAssignedDriver == null) {
+            request.setStatus(RideRequestStatus.NO_RIDE);
+            requestRepository.save(request);
+
+            emailService.sendNoRideAvailableEmail(request.getPassenger().getEmail(),
+                    request.getPassenger().getFirstName(),
+                    request.getStartLocation(), request.getEndLocation(), SUPPORT_CONTACT);
+
+            return MessageResponse.displayMessage("No ride");
+        }
+
+        request.setCurrentAssignedDriver(newAssignedDriver);
+
+        // send email to the Driver
+        emailService.sendRideRequestEmail(assignedDriver.getEmail(),  newAssignedDriver.getLastName(),
+                request.getPassenger().getFirstName(), request.getStartLocation(), request.getEndLocation(),
+                request.getTime().toString(), SUPPORT_CONTACT);
+
+        requestRepository.save(request);
+
         return MessageResponse.displayMessage("Ride rejected, Another driver will be assigned");
     }
 
@@ -163,7 +199,7 @@ public class RideRequestService {
         return (costOfRide < passenger.getAccountBalance());
     }
 
-    public Driver assignDriver(List<DriverStatus> drivers, double[] passengerCoordinate) {
+    private Driver assignDriver(List<DriverStatus> drivers, double[] passengerCoordinate) {
         double minDistance = 5000;
         DriverStatus assignDriver = null;
 
@@ -173,9 +209,11 @@ public class RideRequestService {
             double distance = calculateDistance(passengerCoordinate, driverLocation);
 
 
-            if (driver.isAvailability() && distance < minDistance) {
-                minDistance = distance;
-                assignDriver = driver;
+            if (driver.isAvailability() && hasCoolDownExpired(driver)) {
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    assignDriver = driver;
+                }
             }
         }
 
@@ -216,5 +254,20 @@ public class RideRequestService {
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
         return EARTH_RADIUS * c;
+    }
+
+    private boolean hasCoolDownExpired(DriverStatus driverStatus) {
+        // cool down period is 30 minutes
+        Duration coolDownPeriod = Duration.ofMinutes(30);
+
+        if (driverStatus.getLastRejectionTime() == null) {
+            // Driver hasn't rejected a ride before
+            return true;
+        }
+
+        LocalDateTime currentTime = LocalDateTime.now();
+        LocalDateTime rejectionTime = driverStatus.getLastRejectionTime();
+
+        return Duration.between(rejectionTime, currentTime).compareTo(coolDownPeriod) >= 0;
     }
 }

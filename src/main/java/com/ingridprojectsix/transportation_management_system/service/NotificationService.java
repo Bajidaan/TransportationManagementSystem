@@ -1,8 +1,9 @@
 package com.ingridprojectsix.transportation_management_system.service;
 
+import com.ingridprojectsix.transportation_management_system.exception.UsersNotFoundException;
 import com.ingridprojectsix.transportation_management_system.model.Notification;
-import com.ingridprojectsix.transportation_management_system.model.NotificationStatus;
-import com.ingridprojectsix.transportation_management_system.model.NotificationUpdateRequest;
+import com.ingridprojectsix.transportation_management_system.model.domain.NotificationStatus;
+import com.ingridprojectsix.transportation_management_system.dto.NotificationUpdateRequest;
 import com.ingridprojectsix.transportation_management_system.model.Users;
 import com.ingridprojectsix.transportation_management_system.repository.NotificationRepository;
 import com.ingridprojectsix.transportation_management_system.repository.UserRepository;
@@ -24,7 +25,8 @@ public class NotificationService {
     private UserRepository userRepository;
 
     public void sendNotification(Long userId, String message) {
-        Users user = userRepository.getUserById(userId);
+        Users user = userRepository.findById(userId)
+                .orElseThrow(UsersNotFoundException::new);;
 
         if (user != null) {
             Notification notification = new Notification();

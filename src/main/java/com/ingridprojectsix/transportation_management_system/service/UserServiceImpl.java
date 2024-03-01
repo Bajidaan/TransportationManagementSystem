@@ -15,6 +15,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 public class UserServiceImpl implements UserService{
 
@@ -45,21 +47,16 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public AccountResponse register(SignupRequest request) {
-        if (userRepository.existsByEmail(request.getEmail())){
-            return AccountResponse.builder()
-                    .responseCode(SignupUtils.ACCOUNT_NOT_EXIST_CODE)
-                    .responseMessage(SignupUtils.ACCOUNT_NOT_EXIST_MESSAGE)
-                    .build();
-        }
-
         Users users = Users.builder()
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
+                .registrationDate(LocalDateTime.now())
+                .role(request.getRole())
                 .build();
 
-        Users saveUser = userRepository.save(users);
+        userRepository.save(users);
         return AccountResponse.builder()
                 .responseCode(SignupUtils.SUCCESS_CODE)
                 .responseMessage(SignupUtils.SUCCESS_MESSAGE)

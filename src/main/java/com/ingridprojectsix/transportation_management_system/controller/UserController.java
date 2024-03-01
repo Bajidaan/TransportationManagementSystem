@@ -4,6 +4,7 @@ import com.ingridprojectsix.transportation_management_system.dto.AccountResponse
 import com.ingridprojectsix.transportation_management_system.dto.LoginRequest;
 import com.ingridprojectsix.transportation_management_system.dto.SignupRequest;
 import com.ingridprojectsix.transportation_management_system.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1")
-public class LoginController {
+@RequestMapping("/api/v1/users")
+public class UserController {
 
     @Autowired
     private UserService userService;
@@ -23,7 +24,7 @@ public class LoginController {
     }
 
     @PostMapping("/register")
-    public AccountResponse register(@RequestBody SignupRequest request){
+    public AccountResponse register(@RequestBody @Valid SignupRequest request){
         return userService.register(request);
     }
 }

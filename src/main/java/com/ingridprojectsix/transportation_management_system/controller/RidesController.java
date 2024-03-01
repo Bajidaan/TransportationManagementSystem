@@ -1,9 +1,9 @@
 package com.ingridprojectsix.transportation_management_system.controller;
 
+import com.ingridprojectsix.transportation_management_system.dto.UpdateRideStatus;
 import com.ingridprojectsix.transportation_management_system.exception.RideNotFoundException;
-import com.ingridprojectsix.transportation_management_system.model.RequestStatus;
+import com.ingridprojectsix.transportation_management_system.model.domain.RequestStatus;
 import com.ingridprojectsix.transportation_management_system.model.Rides;
-import com.ingridprojectsix.transportation_management_system.service.RideServiceImp;
 import com.ingridprojectsix.transportation_management_system.service.RidesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -79,11 +79,11 @@ public class RidesController {
         return new ResponseEntity<>(rides, HttpStatus.OK);
     }
 
-    @PutMapping("/updateStatus")
+    @PutMapping("/updateStatus/{rideId}")
     public ResponseEntity<Rides> updateStatus(@PathVariable long rideId,
-                                              @RequestBody RequestStatus newStatus){
+                                              @RequestBody UpdateRideStatus newStatus){
 
-        Rides rideDetails = ridesService.updateRideStatus(rideId, newStatus);
+        Rides rideDetails = ridesService.updateStatus(rideId, newStatus);
         return new ResponseEntity<>(rideDetails, HttpStatus.OK);
     }
 

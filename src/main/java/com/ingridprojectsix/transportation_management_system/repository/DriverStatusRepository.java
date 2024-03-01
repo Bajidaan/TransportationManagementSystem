@@ -8,4 +8,6 @@ import java.util.Optional;
 
 public interface DriverStatusRepository extends JpaRepository<DriverStatus, Long> {
     List<DriverStatus> findByAvailability(boolean isAvailable);
+
+    Optional<DriverStatus> findByDriver_DriverId(Long id);
 }

@@ -3,6 +3,7 @@ package com.ingridprojectsix.transportation_management_system.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,12 +28,12 @@ public class Driver {
     private Users user;
 
     @NotBlank(message = "first name is required")
-    @Size(min = 6, max = 50, message = "first name must be within the range of 6 - 50 characters")
+   // @Size(min = 6, max = 50, message = "first name must be within the range of 6 - 50 characters")
     @Column(name = "first_name")
     private String firstName;
 
     @NotBlank(message = "first name is required")
-    @Size(min = 6, max = 50, message = "last name must be within the range of 6 - 50 characters")
+    //@Size(min = 6, max = 50, message = "last name must be within the range of 6 - 50 characters")
     @Column(name = "last_name")
     private String lastName;
 
@@ -60,14 +61,10 @@ public class Driver {
     private Double accountBalance;
 
     @NotBlank
-    @Column(name = "registration_date")
-    private LocalDateTime registrationDate;
-
-    @NotBlank
     @Column(name = "location")
     private String address;
 
-    @NotBlank
+    //@NotBlank
     @Column(name = "registration_date")
     private LocalDateTime registrationDate;
 }

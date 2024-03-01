@@ -1,7 +1,8 @@
 package com.ingridprojectsix.transportation_management_system.service;
 
+import com.ingridprojectsix.transportation_management_system.dto.UpdateRideStatus;
 import com.ingridprojectsix.transportation_management_system.exception.RideNotFoundException;
-import com.ingridprojectsix.transportation_management_system.model.RequestStatus;
+import com.ingridprojectsix.transportation_management_system.model.domain.RequestStatus;
 import com.ingridprojectsix.transportation_management_system.model.Rides;
 import com.ingridprojectsix.transportation_management_system.repository.RidesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,6 +121,22 @@ public class RideServiceImp implements RidesService {
             return ridesRepository.save(ride);
         }else{
            throw  new RideNotFoundException("Ride with id " +rideId +" not found" );
+        }
+
+    }
+
+    @Override
+    public Rides updateStatus(long rideId, UpdateRideStatus newStatus) {
+        Optional<Rides> existingRide = this.getRideById(rideId);
+
+        if(existingRide.isPresent()){
+            Rides ride = existingRide.get();
+
+            ride.setStatus(newStatus.getStatus());
+
+            return ridesRepository.save(ride);
+        } else{
+            throw  new RideNotFoundException("Ride with id " + rideId + " not found" );
         }
 
     }

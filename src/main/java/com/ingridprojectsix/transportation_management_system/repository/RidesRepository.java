@@ -1,6 +1,6 @@
 package com.ingridprojectsix.transportation_management_system.repository;
 
-import com.ingridprojectsix.transportation_management_system.model.RequestStatus;
+import com.ingridprojectsix.transportation_management_system.model.domain.RequestStatus;
 import com.ingridprojectsix.transportation_management_system.model.Rides;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

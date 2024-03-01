@@ -1,5 +1,6 @@
 package com.ingridprojectsix.transportation_management_system.model;
 
+import com.ingridprojectsix.transportation_management_system.model.domain.RequestStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,10 +20,10 @@ public class Rides {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Column(name = "ride_id")
     private long riderId;
 
-    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "passenger_id")
+    @ManyToOne(fetch = FetchType.EAGER) @JoinColumn(name = "passenger_id")
     private Passenger passengers;
 
-    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "driver_id")
+    @ManyToOne(fetch = FetchType.EAGER) @JoinColumn(name = "driver_id")
     private Driver drivers;
 
     @Column(name = "start_location")
@@ -32,7 +33,7 @@ public class Rides {
     private String endLocation;
 
     @Column(name = "status")  @Enumerated(EnumType.STRING)
-    private  RequestStatus status;
+    private RequestStatus status;
 
     @Column(name = "fare")
     private double fare;

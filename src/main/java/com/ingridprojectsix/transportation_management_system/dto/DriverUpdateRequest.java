@@ -1,10 +1,9 @@
-package com.ingridprojectsix.transportation_management_system.model;
+package com.ingridprojectsix.transportation_management_system.dto;
 
 import lombok.Data;
 
 @Data
 public class DriverUpdateRequest {
-
     private Long driverId;
     private String firstName;
     private String lastName;
@@ -13,6 +12,6 @@ public class DriverUpdateRequest {
     private String licenseNumber;
     private String plateNumber;
     private String carModel;
-    private String location;
+    private String address;
     private String registrationDate;
 }

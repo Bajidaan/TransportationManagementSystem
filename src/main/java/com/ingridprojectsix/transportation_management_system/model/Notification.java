@@ -1,5 +1,6 @@
 package com.ingridprojectsix.transportation_management_system.model;
 
+import com.ingridprojectsix.transportation_management_system.model.domain.NotificationStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
